@@ -97,13 +97,36 @@ upcSearch.prototype.onStop = function() {
     return libQ.resolve();
 };
 
+upcSearch.prototype.subdivideString = function(data) {
+    var self = this;
+    if (data.length <= 5) {
+		data = ""
+		return data
+	}
+	
+	const seperators = ":-;_=|({["
+	for (const sep of seperators) {
+		var idx = data.indexOf(sep);
+		if (idx >= 4){
+			data = data.substring(0, separator-1)
+			return data
+		}
+	}
+	
+	// no obvious separators, try halving the string
+	var end = Math.floor(data.length / 2)
+	data = data.substring(0, end)
+	return data
+};
+
+
+// Plugin Logic --------------------------------------------------------------------------------------
+
 upcSearch.prototype.onRestart = function() {
     var self = this;
     // Optional, use if you need it
 };
 
-
-// Plugin Logic --------------------------------------------------------------------------------------
 
 upcSearch.prototype.setDiscogsToken = function(data) {
 	var self = this;
@@ -270,6 +293,7 @@ upcSearch.prototype.searchAlbumArtist = function(state) {
 	
 	self.logger.debug("UPC_SEARCH::searchAlbumArtist emitting 'search' with data:\n\t" + JSON.stringify(search_data));
 	
+	
 	self.socket.emit("search", search_data);
 	self.socket.once("pushBrowseLibrary", function(data) {
 		self.logger.debug("Response!");
@@ -356,7 +380,7 @@ upcSearch.prototype.onSearchResults = function(data) {
 		albums = result
 	}
 	
-	if (found_one) {	
+	if (found_one) {
 		switch(self.config.get('behavior')) {
 			case 1:
 				self.socket.emit("replaceAndPlay", {service:albums[0].service, uri:albums[0].uri})
@@ -371,6 +395,17 @@ upcSearch.prototype.onSearchResults = function(data) {
 		}
 	} else {
 		self.logger.debug("UPC_SEARCH::onSearchResults found nothing!")
+		
+		self.logger.debug("UPC_SEARCH::onSearchResults attempting subdivision of search terms")
+		print(self.artist)
+		self.artist = subdivideString(self.artist)
+		print(self.artist)
+		
+		print(self.album)
+		self.album = subdivideString(self.album)
+		print(self.album)
+		
+		self.searchAlbumArtist({album: self.album, artist: self.artist});
 	}
 };
 
