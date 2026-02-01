@@ -405,7 +405,7 @@ upcSearch.prototype.onSearchResults = function(data) {
 		self.album = self.subdivideString(self.album)
 		self.logger.debug(self.album)
 		
-		if (self.ablum.length > 0 && self.artist.length > 0) {
+		if (self.album.length > 0 && self.artist.length > 0) {
 			self.searchAlbumArtist({album: self.album, artist: self.artist});
 		} else {
 			self.logger.debug("UPC_SEARCH::onSearchResults can't subdivide");
