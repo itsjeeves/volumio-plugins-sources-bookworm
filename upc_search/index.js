@@ -397,13 +397,13 @@ upcSearch.prototype.onSearchResults = function(data) {
 		self.logger.debug("UPC_SEARCH::onSearchResults found nothing!")
 		
 		self.logger.debug("UPC_SEARCH::onSearchResults attempting subdivision of search terms")
-		print(self.artist)
+		self.logger.debug(self.artist)
 		self.artist = subdivideString(self.artist)
-		print(self.artist)
+		self.logger.debug(self.artist)
 		
-		print(self.album)
+		self.logger.debug(self.album)
 		self.album = subdivideString(self.album)
-		print(self.album)
+		self.logger.debug(self.album)
 		
 		self.searchAlbumArtist({album: self.album, artist: self.artist});
 	}
