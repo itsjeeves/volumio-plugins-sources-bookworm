@@ -1,0 +1,10 @@
+{
+	"token":{
+		"type": "string",
+		"value": ""
+	},
+	"behavior":{
+		"type": "number",
+		"value": 3
+	}
+}
