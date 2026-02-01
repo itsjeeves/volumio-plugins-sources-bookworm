@@ -1,0 +1,122 @@
+{
+	"page": {
+		"label": "TRANSLATE.PLUGIN_CONFIGURATION"
+	},
+	"sections": [
+		{
+			"id": "section_discogs_token",
+			"element": "section",
+			"label": "TRANSLATE.DISCOGS_SECTION",
+			"icon": "fa-plug",
+			"onSave": {"type":"controller", "endpoint":"user_interface/upc_search", "method":"setDiscogsToken"},
+			"saveButton": {
+				"label": "TRANSLATE.SAVE",
+				"data": [
+					"token"
+				]
+			},
+			"content": [
+				{
+					"id": "token",
+					"type": "text",
+					"element": "input",
+					"doc": "TRANSLATE.DOCS.TOKEN",
+					"label": "TRANSLATE.TOKEN",
+					"value": ""
+				}
+			]
+		},
+		{
+			"id": "section_options",
+			"element": "section",
+			"label": "TRANSLATE.OPTIONS",
+			"icon": "fa-plug",
+			"onSave": {"type":"controller", "endpoint":"user_interface/upc_search", "method":"setOptions"},
+			"saveButton": {
+				"label": "TRANSLATE.SAVE",
+				"data": [
+					"onSearch"
+				]
+			},
+			"content": [
+				{
+					"id": "onSearch",
+					"type": "text",
+					"element": "select",
+					"doc": "TRANSLATE.DOCS.ONSEARCH",
+					"label": "TRANSLATE.ONSEARCH",
+					"value": {"value": 1,"label": "TRANSLATE.REPLACE_AND_PLAY"},
+					"options": [
+						{
+							"value": 1,
+							"label": "TRANSLATE.REPLACE_AND_PLAY"
+						},
+						{
+							"value": 2,
+							"label": "TRANSLATE.ADD_ONLY"
+						},
+						{
+							"value": 3,
+							"label": "TRANSLATE.LOOKUP"
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "section_search",
+			"element": "section",
+			"label": "TRANSLATE.SEARCH_SECTION",
+			"icon": "fa-plug",
+			"onSave": {"type":"controller", "endpoint":"user_interface/upc_search", "method":"searchAlbumArtist"},
+			"saveButton": {
+				"label":"TRANSLATE.SEARCH",
+				"data": [
+					"album",
+					"artist"
+				]
+			},
+			"content": [
+				{
+					"id": "album",
+					"type": "text",
+					"element": "input",
+					"doc": "TRANSLATE.DOCS.ALBUM",
+					"label": "TRANSLATE.ALBUM",
+					"value": "dark"
+				},
+				{
+					"id": "artist",
+					"type": "text",
+					"element": "input",
+					"doc": "TRANSLATE.DOCS.ARTIST",
+					"label": "TRANSLATE.ARTIST",
+					"value": "Pink Floyd"
+				}
+			]
+		},
+		{
+			"id": "upc_section_search",
+			"element": "section",
+			"label": "TRANSLATE.UPC_SEARCH_SECTION",
+			"icon": "fa-plug",
+			"onSave": {"type":"controller", "endpoint":"user_interface/upc_search", "method":"searchUPC"},
+			"saveButton": {
+				"label":"TRANSLATE.SEARCH",
+				"data": [
+					"upc"
+				]
+			},
+			"content": [
+				{
+					"id": "upc",
+					"type": "text",
+					"element": "input",
+					"doc": "TRANSLATE.DOCS.UPC",
+					"label": "TRANSLATE.UPC",
+					"value": "7 2064-24425-2 4"
+				}
+			]
+		}
+	]
+}

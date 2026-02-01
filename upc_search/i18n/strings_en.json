@@ -1,0 +1,25 @@
+{
+	"PLUGIN_CONFIGURATION":"UPC Search Configuration",
+	"SAVE":"Save",
+	"SEARCH_SECTION":"Album/Artist search testing",
+	"UPC_SEARCH_SECTION":"UPC search testing",
+	"DISCOGS_SECTION":"Discogs Account",
+	"SEARCH":"Search",
+	"SECRET":"Token",
+	"UPC":"UPC (Barcode)",
+	"ALBUM":"Album",
+	"ARTIST":"Artist",
+	"LOGOUT":"Clear token",
+	"ONSEARCH":"Behavior on scan",
+	"REPLACE_AND_PLAY":"Replace and Play",
+	"ADD_AND_PLAY":"Add and Play",
+	"ADD_ONLY":"Add only",
+	"LOOKUP":"Look up UPC data only",
+	"DOCS":{
+		"ALBUM":"Album to search for",
+		"ARTIST":"Artist (to disambiguate between similar albums)",
+		"KEY":"Discogs personal access token",
+		"ONSEARCH":"Action to perform upon scanning a barcode",
+		"UPC":"UPC from some album"
+	}
+}
