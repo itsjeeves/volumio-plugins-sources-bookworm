@@ -299,10 +299,6 @@ upcSearch.prototype.searchAlbumArtist = function(state) {
 		self.logger.debug("Response!");
 		self.onSearchResults(data);
 		});
-		
-	self.artist = null;
-	self.album = null;
-	self.master_id = null;
 };
 
 upcSearch.prototype.onSearchResults = function(data) {
@@ -393,6 +389,10 @@ upcSearch.prototype.onSearchResults = function(data) {
 				//self.commandRouter.pushToastMessage('error', "Discogs Token", "Token was invalid! " + JSON.stringify(err));
 				break;
 		}
+		
+		self.artist = null;
+		self.album = null;
+		self.master_id = null;
 	} else {
 		self.logger.debug("UPC_SEARCH::onSearchResults found nothing!")
 		
@@ -405,7 +405,15 @@ upcSearch.prototype.onSearchResults = function(data) {
 		self.album = self.subdivideString(self.album)
 		self.logger.debug(self.album)
 		
-		self.searchAlbumArtist({album: self.album, artist: self.artist});
+		if (self.ablum.length > 0 && self.artist.length > 0) {
+			self.searchAlbumArtist({album: self.album, artist: self.artist});
+		} else {
+			self.logger.debug("UPC_SEARCH::onSearchResults can't subdivide");
+		
+			self.artist = null;
+			self.album = null;
+			self.master_id = null;
+		}
 	}
 };
 
