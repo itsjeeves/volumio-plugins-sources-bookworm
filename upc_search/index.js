@@ -263,7 +263,7 @@ upcSearch.prototype.searchAlbumArtist = function(state) {
 	if (state.artist && state.artist.length >= 1) {
 		search_val = state.artist + " " + search_val;
 	}
-	var search_data = { 'value':search_val , 'service':'mpd'};
+	var search_data = { 'value':search_val, 'service':'mpd'};
 	
 	self.search_state = state;
 	self.search_state['search_val'] = search_val;
