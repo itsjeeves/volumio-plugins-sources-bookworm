@@ -108,7 +108,7 @@ upcSearch.prototype.subdivideString = function(data) {
 	for (const sep of seperators) {
 		var idx = data.indexOf(sep);
 		if (idx >= 4){
-			data = data.substring(0, separator-1)
+			data = data.substring(0, idx-1)
 			return data
 		}
 	}
