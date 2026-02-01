@@ -263,7 +263,7 @@ upcSearch.prototype.searchAlbumArtist = function(state) {
 	if (state.artist && state.artist.length >= 1) {
 		search_val = state.artist + " " + search_val;
 	}
-	var search_data = { 'value':search_val};
+	var search_data = { 'value':search_val , 'service':'mpd'};
 	
 	self.search_state = state;
 	self.search_state['search_val'] = search_val;
@@ -344,8 +344,10 @@ upcSearch.prototype.onSearchResults = function(data) {
 	const result = searcher.search(self.search_state.search_val)
 	
 	self.logger.debug("UPC_SEARCH::onSearchResults extracted albums:");
+	var found_one = false
 	for (let i = 0; i < albums.length; i++) {
 		self.logger.debug("\t" + JSON.stringify(albums[i]));
+		found_one = true
 	}
 	
 	self.logger.debug("UPC_SEARCH::onSearchResults chose final result: " + JSON.stringify(result));
@@ -354,17 +356,21 @@ upcSearch.prototype.onSearchResults = function(data) {
 		albums = result
 	}
 	
-	switch(self.config.get('behavior')) {
-		case 1:
-			self.socket.emit("replaceAndPlay", {service:albums[0].service, uri:albums[0].uri})
-			break;
-		case 2:
-			self.socket.emit("addToQueue", {service:albums[0].service, uri:albums[0].uri})
-			break;
-		case 3:
-			self.commandRouter.pushToastMessage('success', "Found entry", self.search_state['search_val']);
-			//self.commandRouter.pushToastMessage('error', "Discogs Token", "Token was invalid! " + JSON.stringify(err));
-			break;
+	if (found_one) {	
+		switch(self.config.get('behavior')) {
+			case 1:
+				self.socket.emit("replaceAndPlay", {service:albums[0].service, uri:albums[0].uri})
+				break;
+			case 2:
+				self.socket.emit("addToQueue", {service:albums[0].service, uri:albums[0].uri})
+				break;
+			case 3:
+				self.commandRouter.pushToastMessage('success', "Found entry", self.search_state['search_val']);
+				//self.commandRouter.pushToastMessage('error', "Discogs Token", "Token was invalid! " + JSON.stringify(err));
+				break;
+		}
+	} else {
+		self.logger.debug("UPC_SEARCH::onSearchResults found nothing!")
 	}
 };
 
