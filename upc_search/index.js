@@ -257,7 +257,7 @@ upcSearch.prototype.searchUPC = function(data) {
 	self.artist = null;
 	self.album = null;
 	self.master_id = null;
-	self.all_results = null;
+	self.full_results = null;
 	
 	var releaseInfo = {
 		'artist': null,
@@ -390,8 +390,8 @@ upcSearch.prototype.onSearchResults = function(data) {
 		//  - fall back to all results if possible
 		albums = self.full_results;
 	
-	} else {
-		albums = local_albums;
+	//} else {
+	//	albums = local_albums;
 	}
 	
 	const searcher = new FuzzySearch(albums, ['artist_album'], {'caseSensitive':false, 'sort':true})
@@ -427,10 +427,10 @@ upcSearch.prototype.onSearchResults = function(data) {
 		self.artist = null;
 		self.album = null;
 		self.master_id = null;
-		self.all_results = null;
+		self.full_results = null;
 	} 
 	/*else {
-		self.all_results = albums;
+		self.full_results = albums;
 		self.logger.debug("UPC_SEARCH::onSearchResults found nothing!")
 		
 		self.logger.debug("UPC_SEARCH::onSearchResults attempting subdivision of search terms")
