@@ -99,24 +99,28 @@ upcSearch.prototype.onStop = function() {
 
 upcSearch.prototype.subdivideString = function(data) {
     var self = this;
-    if (data.length <= 5) {
-		data = ""
-		return data
-	}
+	self.logger.debug("UPC_SEARCH::subdivideString attempting to shorten " + data);
+    if (data.length > 5) {
 	
-	const seperators = ":-;_=|({["
-	for (const sep of seperators) {
-		var idx = data.indexOf(sep);
-		if (idx >= 4){
-			data = data.substring(0, idx-1)
-			return data
+		const seperators = ":-;_=|({["
+		for (const sep of seperators) {
+			var idx = data.indexOf(sep);
+			if (idx >= 4){
+				self.logger.debug("UPC_SEARCH::subdivideString found separator " + sep + " at " + idx);
+				data = data.substring(0, idx-1)
+				break;
+			}
 		}
 	}
 	
+	self.logger.debug("UPC_SEARCH::subdivideString results " + data);
+	/*
 	// no obvious separators, try halving the string
 	var end = Math.floor(data.length / 2)
 	data = data.substring(0, end)
 	return data
+	*/
+	return data;
 };
 
 
@@ -186,13 +190,13 @@ upcSearch.prototype.updateFromMasterID = function(){
 			
 			if (self.album && self.artist) {
 				self.logger.debug("UPC_SEARCH::updateFromMasterID would have played master_id")
-				self.searchAlbumArtist({album: self.album, artist: self.artist});		
+				self.searchAlbumArtist({album: self.album, artist: self.artist, service: 'all'});		
 			}
 		});
 	} else {
 		if (self.album && self.artist) {
 			self.logger.debug("UPC_SEARCH::updateFromMasterID would have played else")
-			self.searchAlbumArtist({album: self.album, artist: self.artist});		
+			self.searchAlbumArtist({album: self.album, artist: self.artist, service: 'all'});		
 		}
 	}
 };
@@ -253,6 +257,7 @@ upcSearch.prototype.searchUPC = function(data) {
 	self.artist = null;
 	self.album = null;
 	self.master_id = null;
+	self.all_results = null;
 	
 	var releaseInfo = {
 		'artist': null,
@@ -286,7 +291,10 @@ upcSearch.prototype.searchAlbumArtist = function(state) {
 	if (state.artist && state.artist.length >= 1) {
 		search_val = state.artist + " " + search_val;
 	}
-	var search_data = { 'value':search_val, 'service':'mpd'};
+	var search_data = { 'value':search_val };
+	if (state.service && state.service !== 'all') {
+		search_data.service = state.service
+	}
 	
 	self.search_state = state;
 	self.search_state['search_val'] = search_val;
@@ -342,6 +350,7 @@ upcSearch.prototype.onSearchResults = function(data) {
 	self.logger.debug("UPC_SEARCH::onSearchResults extracted raw albums:");
 	for (let i = 0; i < albums.length; i++) {
 		self.logger.debug("\t" + JSON.stringify(albums[i]));
+		albums[i].artist_album = albums[i].artist + " " + albums[i].title;
 	}
 	
 	var local_albums = albums.filter(function (el) {
@@ -350,12 +359,37 @@ upcSearch.prototype.onSearchResults = function(data) {
 	
 	self.logger.debug("UPC_SEARCH::onSearchResults local albums: ")
 	for (let i = 0; i < local_albums.length; i++) {
-		local_albums[i].artist_album = local_albums[i].artist + " " + local_albums[i].title
+		//local_albums[i].artist_album = local_albums[i].artist + " " + local_albums[i].title
 		self.logger.debug("\t" + JSON.stringify(local_albums[i]));
 	}
 	
 	if (local_albums.length == 0) {
-		self.logger.debug("\tNone!  Falling back to all found albums");
+		self.logger.debug("\tNone!");
+	
+		if (!self.full_results) {
+			// we haven't subdivided yet
+			var service = 'all'
+			if (albums.length > 0) {
+				service = 'mpd';
+				self.full_results = albums;
+			}
+			
+			var new_artist = self.subdivideString(self.artist);
+			var new_album = self.subdivideString(self.album);
+			if (new_artist !== self.artist || new_album !== self.album) {
+				self.artist = new_artist;
+				self.album = new_album;
+				self.searchAlbumArtist({album: self.album, artist: self.artist, service: service});
+			}
+		}
+		
+		// if we're here:
+		//	- there were no local albums
+		//  - we've already subdivided and still didn't get any hits OR there's no subdividing to do
+		// so:
+		//  - fall back to all results if possible
+		albums = self.full_results;
+	
 	} else {
 		albums = local_albums;
 	}
@@ -393,7 +427,10 @@ upcSearch.prototype.onSearchResults = function(data) {
 		self.artist = null;
 		self.album = null;
 		self.master_id = null;
-	} else {
+		self.all_results = null;
+	} 
+	/*else {
+		self.all_results = albums;
 		self.logger.debug("UPC_SEARCH::onSearchResults found nothing!")
 		
 		self.logger.debug("UPC_SEARCH::onSearchResults attempting subdivision of search terms")
@@ -406,7 +443,7 @@ upcSearch.prototype.onSearchResults = function(data) {
 		self.logger.debug(self.album)
 		
 		if (self.album.length > 0 && self.artist.length > 0) {
-			self.searchAlbumArtist({album: self.album, artist: self.artist});
+			self.searchAlbumArtist({album: self.album, artist: self.artist, service: 'mpd'});
 		} else {
 			self.logger.debug("UPC_SEARCH::onSearchResults can't subdivide");
 		
@@ -415,6 +452,7 @@ upcSearch.prototype.onSearchResults = function(data) {
 			self.master_id = null;
 		}
 	}
+	*/
 };
 
 
