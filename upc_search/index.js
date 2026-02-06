@@ -380,6 +380,7 @@ upcSearch.prototype.onSearchResults = function(data) {
 				self.artist = new_artist;
 				self.album = new_album;
 				self.searchAlbumArtist({album: self.album, artist: self.artist, service: service});
+				return;
 			}
 		}
 		
