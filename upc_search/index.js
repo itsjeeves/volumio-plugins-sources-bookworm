@@ -292,6 +292,8 @@ upcSearch.prototype.searchAlbumArtist = function(state) {
 	self.logger.debug("UPC_SEARCH::searchAlbumArtist got state:")
 	self.logger.debug(JSON.stringify(state));
 	
+	self.artist = state.artist
+	self.album = state.album
 	
 	var search_val = state.album;
 	if (state.artist && state.artist.length >= 1) {

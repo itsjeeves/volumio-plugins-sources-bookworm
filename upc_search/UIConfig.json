@@ -72,8 +72,8 @@
 			"saveButton": {
 				"label":"TRANSLATE.SEARCH",
 				"data": [
-					"album",
-					"artist"
+					"artist",
+					"album"
 				]
 			},
 			"content": [
