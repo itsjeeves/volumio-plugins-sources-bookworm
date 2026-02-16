@@ -26,6 +26,7 @@ https://github.com/volumio/volumio-plugins-sources/tree/master
 /*
 02521800022  // CCR - Chronicle // subdivide
 602475490067 // TPHB - TPHB // artist == title
+731452141422 // Getz/Gilberto // whitespace mismatches in spotify
 
 */
 
@@ -402,8 +403,8 @@ upcSearch.prototype.onSearchResults = function(data) {
 	
 	var raw_albums = albums.filter(function (el) {
 		var raw_album = el;
-		raw_album.title = raw_album.title.replace(/\s/g, "");
-		raw_album.artist = raw_album.artist.replace(/\s/g, "");
+		if (raw_album.title) raw_album.title = raw_album.title.replace(/\s/g, "");
+		if (raw_album.artist) raw_album.artist = raw_album.artist.replace(/\s/g, "");
 		return raw_album;
 	});
 	
