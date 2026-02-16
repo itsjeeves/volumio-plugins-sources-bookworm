@@ -399,6 +399,14 @@ upcSearch.prototype.onSearchResults = function(data) {
 	
 	//} else {
 	//	albums = local_albums;
+	} else {
+		if (local_albums.length == 1 && local_albums[0].artist_album === self.search_state.search_val) {
+			self.logger.debug("UPC_SEARCH::onSearchResults found local perfect match");
+		} else {
+			self.logger.debug("UPC_SEARCH::onSearchResults found local match(es)");
+		}
+		
+		albums = local_albums;
 	}
 	
 	var raw_albums = albums.filter(function (el) {
@@ -407,9 +415,6 @@ upcSearch.prototype.onSearchResults = function(data) {
 		return raw_album;
 	});
 	
-	const searcher = new FuzzySearch(raw_albums, ['artist_album'], {'caseSensitive':false, 'sort':true})
-	const result = searcher.search(self.search_state.search_val.replace(/\s/g, ""))
-	
 	self.logger.debug("UPC_SEARCH::onSearchResults extracted albums:");
 	var found_one = false
 	for (let i = 0; i < albums.length; i++) {
@@ -417,8 +422,9 @@ upcSearch.prototype.onSearchResults = function(data) {
 		found_one = true
 	}
 	
+	const searcher = new FuzzySearch(raw_albums, ['artist_album'], {'caseSensitive':false, 'sort':true})
+	const result = searcher.search(self.search_state.search_val.replace(/\s/g, ""))
 	self.logger.debug("UPC_SEARCH::onSearchResults chose final result: " + JSON.stringify(result));
-	
 	if (result.length > 0) {
 		albums = result
 	}
@@ -432,7 +438,7 @@ upcSearch.prototype.onSearchResults = function(data) {
 				self.socket.emit("addToQueue", {service:albums[0].service, uri:albums[0].uri})
 				break;
 			case 3:
-				self.commandRouter.pushToastMessage('success', "Found entry", self.search_state['search_val']);
+				self.commandRouter.pushToastMessage('success', "Found entry", albums[0].service + " " + self.search_state['search_val']);
 				//self.commandRouter.pushToastMessage('error', "Discogs Token", "Token was invalid! " + JSON.stringify(err));
 				break;
 		}
