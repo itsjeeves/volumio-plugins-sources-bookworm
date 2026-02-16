@@ -403,8 +403,7 @@ upcSearch.prototype.onSearchResults = function(data) {
 	
 	var raw_albums = albums.filter(function (el) {
 		var raw_album = el;
-		if (raw_album.title) raw_album.title = raw_album.title.replace(/\s/g, "");
-		if (raw_album.artist) raw_album.artist = raw_album.artist.replace(/\s/g, "");
+		if (raw_album.artist_album) raw_album.artist_album = raw_album.artist_album.replace(/\s/g, "");
 		return raw_album;
 	});
 	
