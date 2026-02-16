@@ -23,6 +23,11 @@ https://developers.volumio.com/plugins/uiconfig-json
 https://github.com/volumio/volumio-plugins-sources/tree/master
 */
 
+/*
+02521800022  // CCR - Chronicle // subdivide
+602475490067 // TPHB - TPHB // artist == title
+
+*/
 
 module.exports = upcSearch;
 function upcSearch(context) {
@@ -395,8 +400,15 @@ upcSearch.prototype.onSearchResults = function(data) {
 	//	albums = local_albums;
 	}
 	
-	const searcher = new FuzzySearch(albums, ['artist_album'], {'caseSensitive':false, 'sort':true})
-	const result = searcher.search(self.search_state.search_val)
+	var raw_albums = albums.filter(function (el) {
+		var raw_album = el;
+		raw_album.title = raw_album.title.replace(\/s/g, "");
+		raw_album.artist = raw_album.artist.replace(\/s/g, "");
+		return raw_album;
+	});
+	
+	const searcher = new FuzzySearch(raw_albums, ['artist_album'], {'caseSensitive':false, 'sort':true})
+	const result = searcher.search(self.search_state.search_val.replace(\/s/g, ""))
 	
 	self.logger.debug("UPC_SEARCH::onSearchResults extracted albums:");
 	var found_one = false
