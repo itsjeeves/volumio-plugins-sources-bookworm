@@ -203,6 +203,14 @@ upcSearch.prototype.updateFromMasterID = function(){
 		if (self.album && self.artist) {
 			self.logger.debug("UPC_SEARCH::updateFromMasterID would have played else")
 			self.searchAlbumArtist({album: self.album, artist: self.artist, service: 'all'});		
+		} else {
+			// didn't find any UPC results.  See if there's a known problem-causing prefix (scanner in numeric, not alphanumeric, mode?)
+			if (self.upc.substring(0,2) === "20") {
+				var transformed_upc = {
+					upc: "D" + self.upc.substring(2)
+				};
+				self.searchUPC(transformed_upc);
+			}
 		}
 	}
 };
@@ -260,6 +268,7 @@ upcSearch.prototype.searchUPC = function(data) {
 	
 	self.logger.debug("UPC_SEARCH::searchUPC params: " + JSON.stringify(params));
 	
+	self.upc = data.upc;
 	self.artist = null;
 	self.album = null;
 	self.master_id = null;
