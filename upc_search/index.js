@@ -308,8 +308,11 @@ upcSearch.prototype.searchAlbumArtist = function(state) {
 	self.logger.debug("UPC_SEARCH::searchAlbumArtist got state:")
 	self.logger.debug(JSON.stringify(state));
 	
-	self.artist = state.artist
-	self.album = state.album
+	if (state.artist) state.artist = state.artist.toLowerCase();
+	if (state.album) state.album = state.album.toLowerCase();
+	
+	self.artist = state.artist;
+	self.album = state.album;
 	
 	var search_val = state.album;
 	if (state.artist && state.artist.length >= 1) {
@@ -321,7 +324,7 @@ upcSearch.prototype.searchAlbumArtist = function(state) {
 	}
 	
 	self.search_state = state;
-	self.search_state['search_val'] = search_val.toLowerCase();
+	self.search_state['search_val'] = search_val;
 	
 	self.logger.debug("UPC_SEARCH::searchAlbumArtist emitting 'search' with data:\n\t" + JSON.stringify(search_data));
 	
