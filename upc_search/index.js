@@ -27,6 +27,7 @@ https://github.com/volumio/volumio-plugins-sources/tree/master
 02521800022  // CCR - Chronicle // subdivide
 602475490067 // TPHB - TPHB // artist == title
 731452141422 // Getz/Gilberto // whitespace mismatches in spotify
+4577871122 // Jolie Holland + TGS // spop short artist (presubdivide)
 
 */
 
@@ -419,11 +420,10 @@ upcSearch.prototype.onSearchResults = function(data) {
 	} else {
 		if (local_albums.length == 1 && local_albums[0].artist_album === self.search_state.search_val) {
 			self.logger.debug("UPC_SEARCH::onSearchResults found local perfect match");
+			albums = local_albums;
 		} else {
 			self.logger.debug("UPC_SEARCH::onSearchResults found local match(es)");
 		}
-		
-		albums = local_albums;
 	}
 	
 	var raw_albums = albums.filter(function (el) {
