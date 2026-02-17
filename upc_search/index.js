@@ -217,8 +217,10 @@ upcSearch.prototype.updateFromMasterID = function(){
 					upc: "D" + self.upc.substring(2)
 				};
 				self.searchUPC(transformed_upc);
-			} else if (self.upc.substring(-1) === "2") {
-				self.searchUPC(self.upc.substring(0,-1));
+			} else if (self.upc.substring(0,1) === "0") {
+				self.searchUPC({upc: self.upc.substring(1)});
+			} else {
+				self.searchUPC({upc: self.upc.substring(0,self.upc.length - 1)});
 			}
 		}
 	}
