@@ -466,8 +466,8 @@ upcSearch.prototype.onSearchResults = function(data) {
 				self.logger.debug("UPC_SEARCH::onSearchResults relaxing perfect title match");
 				
 				perfect_local_albums = local_albums.filter(function (el) {
-					var el_title = el.title
-					var search_title = self.album
+					var el_title = el.title.replace(/\s/g, "");
+					var search_title = self.album.replace(/\s/g, "");
 					if (el_title.length > search_title.length) {
 						el_title = self.subdivideString(el_title);
 					} else {
