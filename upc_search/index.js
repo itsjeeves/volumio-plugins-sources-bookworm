@@ -374,6 +374,14 @@ upcSearch.prototype.onSearchResults = function(data) {
 	self.logger.debug("UPC_SEARCH::onSearchResults extracted raw albums:");
 	for (let i = 0; i < albums.length; i++) {
 		self.logger.debug("\t" + JSON.stringify(albums[i]));
+		
+		
+		// sanitize things a little bit
+		if (albums[i].title) {
+			albums[i].title = albums[i].title.replace("…", "...");
+		}
+	
+		
 		albums[i].artist_album = albums[i].artist + " " + albums[i].title;
 	}
 	
@@ -418,19 +426,56 @@ upcSearch.prototype.onSearchResults = function(data) {
 	//} else {
 	//	albums = local_albums;
 	} else {
-		if (local_albums.length == 1 && local_albums[0].artist_album === self.search_state.search_val) {
+		var perfect_local_albums = local_albums.filter(function (el) {
+			return el.artist_album === self.search_state.search_val;
+		});
+		
+		if (perfect_local_albums.length >= 1) {
 			self.logger.debug("UPC_SEARCH::onSearchResults found local perfect match");
-			albums = local_albums;
+			albums = perfect_local_albums;
 		} else {
 			self.logger.debug("UPC_SEARCH::onSearchResults found local match(es)");
+			
+			perfect_local_albums = local_albums.filter(function (el) {
+				return el.title === self.album;
+			});
+			
+			if (perfect_local_albums.length >= 1) {
+				self.logger.debug("UPC_SEARCH::onSearchResults found perfect title match");
+				albums = perfect_local_albums;
+			} else {
+				self.logger.debug("UPC_SEARCH::onSearchResults relaxing perfect title match");
+				
+				perfect_local_albums = local_albums.filter(function (el) {
+					var el_title = el.title
+					var search_title = self.album
+					if (el_title.length > search_title.length) {
+						el_title = self.subdivideString(el_title);
+					} else {
+						search_title = self.subdivideString(search_title);
+					}
+					
+					return el_title === search_title;
+				});
+				
+				if (perfect_local_albums.length >= 1) {
+					self.logger.debug("UPC_SEARCH::onSearchResults found relaxed title match");
+					albums = perfect_local_albums;
+				}
+			}
 		}
 	}
 	
-	var raw_albums = albums.filter(function (el) {
-		var raw_album = el;
-		if (raw_album.artist_album) raw_album.artist_album = raw_album.artist_album.replace(/\s/g, "");
-		return raw_album;
-	});
+	var raw_albums;
+	for (let i = 0; i < albums.length; i++) {
+		var raw_album = albums[i];
+		
+		if (raw_album.artist_album) {
+			raw_album.artist_album = raw_album.artist_album.replace(/\s/g, "");
+		}
+		
+		raw_albums.push(raw_album);
+	}
 	
 	self.logger.debug("UPC_SEARCH::onSearchResults extracted albums:");
 	var found_one = false
