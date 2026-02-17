@@ -308,7 +308,18 @@ upcSearch.prototype.searchAlbumArtist = function(state) {
 	self.logger.debug("UPC_SEARCH::searchAlbumArtist got state:")
 	self.logger.debug(JSON.stringify(state));
 	
-	if (state.artist) state.artist = state.artist.toLowerCase();
+	if (state.artist) {
+		state.artist = state.artist.toLowerCase();
+		state.artist = state.artist.replace(" trio", "");
+		state.artist = state.artist.replace(" quartet", "");
+		state.artist = state.artist.replace(" quintet", "");
+		state.artist = state.artist.replace(" sextet", "");
+		state.artist = state.artist.replace(" octet", "");
+		
+		if (state.artist.substring(0,4) === "the " && state.artist.length > 6) {
+			state.artist = state.artist.substring(4);
+		}
+	}
 	if (state.album) state.album = state.album.toLowerCase();
 	
 	self.artist = state.artist;
