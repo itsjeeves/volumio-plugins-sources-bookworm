@@ -321,7 +321,7 @@ upcSearch.prototype.searchAlbumArtist = function(state) {
 	}
 	
 	self.search_state = state;
-	self.search_state['search_val'] = search_val;
+	self.search_state['search_val'] = search_val.toLowerCase();
 	
 	self.logger.debug("UPC_SEARCH::searchAlbumArtist emitting 'search' with data:\n\t" + JSON.stringify(search_data));
 	
@@ -379,6 +379,11 @@ upcSearch.prototype.onSearchResults = function(data) {
 		// sanitize things a little bit
 		if (albums[i].title) {
 			albums[i].title = albums[i].title.replace("…", "...");
+			albums[i].title = albums[i].title.toLowerCase();
+		}
+		
+		if (albums[i].artist) {
+			albums[i].artist = albums[i].artist.toLowerCase();
 		}
 	
 		
