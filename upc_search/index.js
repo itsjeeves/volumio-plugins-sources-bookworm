@@ -108,7 +108,7 @@ upcSearch.prototype.subdivideString = function(data) {
 	self.logger.debug("UPC_SEARCH::subdivideString attempting to shorten " + data);
     if (data.length > 5) {
 	
-		const seperators = ":-;_=|({["
+		const seperators = ":-;_=|({[&"
 		for (const sep of seperators) {
 			var idx = data.indexOf(sep);
 			if (idx >= 4){
@@ -196,13 +196,19 @@ upcSearch.prototype.updateFromMasterID = function(){
 			
 			if (self.album && self.artist) {
 				self.logger.debug("UPC_SEARCH::updateFromMasterID would have played master_id")
-				self.searchAlbumArtist({album: self.album, artist: self.artist, service: 'all'});		
+				// pre-subdivide
+				var new_artist = self.subdivideString(self.artist);
+				var new_album = self.subdivideString(self.album);
+				self.searchAlbumArtist({album: new_album, artist: new_artist, service: 'all'});		
 			}
 		});
 	} else {
 		if (self.album && self.artist) {
 			self.logger.debug("UPC_SEARCH::updateFromMasterID would have played else")
-			self.searchAlbumArtist({album: self.album, artist: self.artist, service: 'all'});		
+			// pre-subdivide
+			var new_artist = self.subdivideString(self.artist);
+			var new_album = self.subdivideString(self.album);
+			self.searchAlbumArtist({album: new_album, artist: new_artist, service: 'all'});		
 		} else {
 			// didn't find any UPC results.  See if there's a known problem-causing prefix (scanner in numeric, not alphanumeric, mode?)
 			if (self.upc.substring(0,2) === "20") {
