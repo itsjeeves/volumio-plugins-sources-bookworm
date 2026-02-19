@@ -17,6 +17,10 @@ var endpoint_data = {
 		//'method': 'searchAlbumArtist',
 	};
 
+
+const custom_upcs = require('./custom_upcs.js');
+
+
 /*
 https://community.volumio.com/t/finding-debugging-logs/58698
 https://developers.volumio.com/plugins/uiconfig-json
@@ -290,18 +294,37 @@ upcSearch.prototype.searchUPC = function(data) {
 		'album': null
 	};
 	
-	self.db.search(params)
-			.then(function(results){
-				self.handleUPCData(results);
-			}).then(function() {
-				self.updateFromMasterID();
-				releaseInfo.artist = self.artist
-				releaseInfo.album = self.album
-				defer.resolve(releaseInfo)
-			}).catch(function(err) {
-				self.logger.error("UPC_SEARCH::searchUPC error: " + JSON.stringify(err));
-				defer.reject(new Error());
-			});
+	
+	// look for a custom UPC
+	if (self.upc.length == 10 && self.upc.substring(0,7) == "7734123") {
+		var custom_index = self.upc.substring(7);
+		if (custom_upcs.list[custom_index]) {
+			self.artist = custom_upcs.list[custom_index][0];
+			self.album = custom_upcs.list[cusom_index][1];
+			releaseInfo.artist = self.artist;
+			releaseInfo.album = self.album;
+			defer.resolve(releaseInfo);
+			self.searchAlbumArtist({album: self.album, artist: self.artist, service: 'all'});	
+		} else {
+			self.logger.debug("UPC_SEARCH::searchUPC found a custom barcode but didn't find an accompanying entry in the custom UPC table: " + self.upc + " ==> " + toString(custom_index));
+		}
+	}
+	
+	// UPC isn't in the custom list, query discogs
+	if (releaseInfo.artist == null && releaseInfo.album == null) {
+		self.db.search(params)
+				.then(function(results){
+					self.handleUPCData(results);
+				}).then(function() {
+					self.updateFromMasterID();
+					releaseInfo.artist = self.artist;
+					releaseInfo.album = self.album;
+					defer.resolve(releaseInfo);
+				}).catch(function(err) {
+					self.logger.error("UPC_SEARCH::searchUPC error: " + JSON.stringify(err));
+					defer.reject(new Error());
+				});
+	}
 			
 	return defer.promise;
 };
