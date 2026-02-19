@@ -300,7 +300,7 @@ upcSearch.prototype.searchUPC = function(data) {
 		var custom_index = self.upc.substring(7);
 		if (custom_upcs.list[custom_index]) {
 			self.artist = custom_upcs.list[custom_index][0];
-			self.album = custom_upcs.list[cusom_index][1];
+			self.album = custom_upcs.list[custom_index][1];
 			releaseInfo.artist = self.artist;
 			releaseInfo.album = self.album;
 			defer.resolve(releaseInfo);
