@@ -462,11 +462,11 @@ upcSearch.prototype.onSearchResults = function(data) {
 		if (!self.full_results) {
 			// we haven't subdivided yet
 			var service = 'all'
-			var extra_separators = null;
+			var extra_separators = " +";
 			if (albums.length > 0) {
 				service = 'mpd';
 				self.full_results = albums;
-				extra_separators = " +";
+				extra_separators = null;
 			}
 			
 			var new_artist = self.subdivideString(self.artist, extra_separators);
