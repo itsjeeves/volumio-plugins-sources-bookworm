@@ -108,9 +108,11 @@ upcSearch.prototype.onStop = function() {
     return libQ.resolve();
 };
 
-upcSearch.prototype.subdivideString = function(data) {
+upcSearch.prototype.subdivideString = function(data, extra_separators) {
     var self = this;
 	self.logger.debug("UPC_SEARCH::subdivideString attempting to shorten " + data);
+	
+	var subdivided = false;
     if (data.length > 5) {
 	
 		const seperators = ":-;_=|({[&"
@@ -118,8 +120,21 @@ upcSearch.prototype.subdivideString = function(data) {
 			var idx = data.indexOf(sep);
 			if (idx >= 4){
 				self.logger.debug("UPC_SEARCH::subdivideString found separator " + sep + " at " + idx);
-				data = data.substring(0, idx-1)
+				data = data.substring(0, idx);
+				subdivided = true;
 				break;
+			}
+		}
+		
+		if (!subdivided && extra_separators) {
+			for (const sep of extra_separators) {
+				var idx = data.indexOf(sep);
+				if (idx >= 4) {
+					self.logger.debug("UPC_SEARCH::subdivideString found extra separator " + sep + " at " + idx);
+					data = data.substring(0, idx);
+					subdivided = true;
+					break;
+				}
 			}
 		}
 	}
@@ -447,13 +462,15 @@ upcSearch.prototype.onSearchResults = function(data) {
 		if (!self.full_results) {
 			// we haven't subdivided yet
 			var service = 'all'
+			var extra_separators = null;
 			if (albums.length > 0) {
 				service = 'mpd';
 				self.full_results = albums;
+				extra_separators = " +";
 			}
 			
-			var new_artist = self.subdivideString(self.artist);
-			var new_album = self.subdivideString(self.album);
+			var new_artist = self.subdivideString(self.artist, extra_separators);
+			var new_album = self.subdivideString(self.album, extra_separators);
 			if (new_artist !== self.artist || new_album !== self.album) {
 				self.artist = new_artist;
 				self.album = new_album;
