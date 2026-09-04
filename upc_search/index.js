@@ -530,6 +530,10 @@ upcSearch.prototype.onSearchResults = function(data) {
 	}
 	
 	var raw_albums = [];
+	if (!albums) {
+		albums = [];
+	}
+	
 	for (let i = 0; i < albums.length; i++) {
 		var raw_album = albums[i];
 		
